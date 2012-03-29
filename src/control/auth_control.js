@@ -29,10 +29,7 @@ function render_settings() {
       padId: padId,
       collab_client_vars: collab_server.getCollabClientVars(pad),
       initialRevisionList: revisions.getRevisionList(pad),
-      serverTimestamp: +(new Date),
       initialOptions: pad.getPadOptionsObj(),
-      userId: getSession().userId,
-      userName: getSession().userName,
       opts: {}
     });
   });

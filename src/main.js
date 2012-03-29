@@ -3,6 +3,7 @@ import("fastJSON");
 import("sqlbase.sqlcommon");
 
 import("utils");
+import("helpers");
 
 import("control.static_control");
 import("control.auth_control");
@@ -16,11 +17,13 @@ import("control.turk_control");
 
 import("collab.collabroom_server");
 import("collab.collab_server");
+import("collab.comet_server");
 import("pad.model");
 import("pad.dbwriter");
 
 import("editor.auth");
 import("editor.workspace");
+import("editor.tree");
 
 jimport("java.lang.System");
 
@@ -30,10 +33,12 @@ serverhandlers.startupHandler = function() {
     
     model.onStartup();
     collab_server.onStartup();
+    comet_server.onStartup();
     dbwriter.onStartup();
     collabroom_server.onStartup();
     auth.onStartup();
     workspace.onStartup();
+    tree.onStartup();
 };
 
 serverhandlers.requestHandler = function() {
@@ -73,6 +78,13 @@ serverhandlers.tasks.orgImportsPrompt = function(connectionId, openChoices, rang
 serverhandlers.tasks.orgImportsApply = function(username, file, connectionId, iterator) {
     workspace.taskOrgImportsApply(username, file, connectionId, iterator);
 };
+serverhandlers.tasks.reportNewResource = function(resource, resourceParent, resourceType) {
+	tree.newResource(resource, resourceParent);
+};
+serverhandlers.tasks.reportRemoveResource = function(resource, resourceParent) {
+	tree.removeResource(resource, resourceParent);
+};
+
 
 serverhandlers.cometHandler = function(op, id, data) {
     if ( ! data) {
@@ -105,6 +117,14 @@ serverhandlers.cometHandler = function(op, id, data) {
 function handlePath() {
   response.neverCache();
 
+  if (utils.getSession().userId) {
+    helpers.addClientVars({
+      serverTimestamp: +(new Date),
+      userId: utils.getSession().userId,
+      userName: utils.getSession().userName,
+    });
+  }
+  
   var noauth = {
     GET: new Dispatcher(),
     POST: new Dispatcher()

@@ -2,6 +2,7 @@ import("helpers");
 import("utils.*");
 
 import("collab.collab_server");
+import("collab.comet_server");
 
 import("editor.auth");
 import("editor.workspace");
@@ -203,10 +204,7 @@ var _renderers = {
         padId: padId,
         collab_client_vars: collab_server.getCollabClientVars(pad),
         initialRevisionList: revisions.getRevisionList(pad),
-        serverTimestamp: +(new Date),
         initialOptions: pad.getPadOptionsObj(),
-        userId: getSession().userId,
-        userName: getSession().userName,
         opts: {}
       });
     });

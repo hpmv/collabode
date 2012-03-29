@@ -7,7 +7,14 @@
 
 <div id="sidebarbox">
   <div class="sidebarsection">
-    <%= helpers.renderList("explorer", projects) %>
+    <div id="treecontainer">
+    <% if (session.userId) {
+      helpers.includeCometClient();
+      helpers.includeTreeScripts();
+    } else {
+      %>The project explorer will appear here once you log in.<%
+    }%>
+    </div>
   </div>
 </div>
 

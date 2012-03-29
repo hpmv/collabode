@@ -12,6 +12,8 @@
 <% helpers.includeJs("collab_client.js") %>
 <% helpers.includeJs("ode_file.js") %>
 <% helpers.includeJs("layout.js") %>
+<% helpers.includeCometClient() %>
+<% helpers.includeTreeScripts() %>
 
 <div id="editorpage">
 
@@ -35,7 +37,8 @@
 
 <div id="sidebarbox" class="autoresized">
   <div class="sidebarsection">
-    <%= helpers.renderList("explorer", projectfiles, file) %>
+    <div id="treecontainer">
+    </div>
   </div>
   <div id="testorcontainer" class="sidebarsection">
   </div>

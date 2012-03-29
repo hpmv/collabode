@@ -19,6 +19,7 @@ import("comet");
 import("fastJSON");
 import("cache_utils.syncedWithCache");
 import("collab.collab_server");
+import("collab.comet_server");
 jimport("java.util.concurrent.ConcurrentSkipListMap");
 jimport("java.util.concurrent.CopyOnWriteArraySet");
 
@@ -207,6 +208,9 @@ function getCallbacksForRoom(roomName, roomType) {
   if (roomType == collab_server.PADPAGE_ROOMTYPE) {
     return collab_server.getRoomCallbacks(roomName, emptyCallbacks);
   }
+  else if (roomType = comet_server.COMETONLY_ROOMTYPE) {
+    return comet_server.getRoomCallbacks(roomName, emptyCallbacks);
+  }
   //else if (roomType == readonly_server.PADVIEW_ROOMTYPE) {
   //  return readonly_server.getRoomCallbacks(roomName, emptyCallbacks);
   //}
@@ -235,7 +239,7 @@ function addRoomConnection(roomName, roomType,
   connections.forEach(function(connection) {
     if (connection.socketId != socketId) {
       var user = connection.data.userInfo.userId;
-      if (user == joiningUser) {
+      if (user == joiningUser && roomType == collab_server.PADPAGE_ROOMTYPE) {
         bootConnection(connection.connectionId, "userdup");
       }
       else {
