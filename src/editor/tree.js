@@ -159,38 +159,33 @@ function folderOpened(nullPadId, user, connectionId, msg, noOriginal) {
 }
 
 // Response to client creating a new resource
-function newResource(resource, parentPath) {
-
-  // Client expects nodes to come in array
-  var child = [];
-
+function newResource(resources, parentPath) {
   // Notify the necessary users to add the new resource to tree
   treeManager().getUsersToNotifyOfChange(parentPath).forEach(function(user) {
-    child.push(makeNode(user, resource));
+    var child = [];
+    resources.forEach(function(resource) {
+      child.push(makeNode(user, resource));
+    });
 
     collab_server.sendUserExtendedMessage(user, {
       type : "TREE_ADD",
       parent : ""+parentPath,
-      data : child,
-
-      // Message will only contain the new node. Client must make
-      // sure that node is placed in correct sorted order
-      many : false
+      data : child
     });
-
-    // Empty array
-    child = [];
   });
 }
 
 // Response to client deleting a resource
-function removeResource(resource, parentPath) {
-
+function removeResource(resources, parentPath) {
   // Notify the necessary users to delete the resource from tree
   treeManager().getUsersToNotifyOfChange(parentPath).forEach(function(user) {
+    var removed = [];
+    resources.forEach(function(resource) {
+      removed.push(""+resource.getFullPath());
+    });
     collab_server.sendUserExtendedMessage(user, {
       type : "TREE_REMOVE",
-      node : ""+resource.getFullPath()
+      data : removed
     });
   });
 }

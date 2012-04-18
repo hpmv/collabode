@@ -11,7 +11,7 @@ function getTreeClient(comet) {
     });
 
     // Add jsTree specific plugins here
-    var jstree_plugins = ["themes", "json_data"];
+    var jstree_plugins = ["themes", "json_data", "sort2"];
 
     // Handler for receiving initial tree request
     comet.setOnExtendedMessage("TREE_INIT", function(msg) {
@@ -44,9 +44,11 @@ function getTreeClient(comet) {
     // Handler for adding new files to the tree. Happens either when
     // a folder is opened or when a new resource was added
     comet.setOnExtendedMessage("TREE_ADD", function(msg) {
+      $.jstree._reference("#treecontainer").disableSort();
       (msg.data).forEach(function(item) {
-        addNodeToDom(item, msg.many);
+        addNodeToDom(item);
       });
+      $.jstree._reference("#treecontainer").enableSort();
 
       // Highlight if necessary
       highlightNode();
@@ -54,7 +56,9 @@ function getTreeClient(comet) {
 
     // Handler for request to remove a node
     comet.setOnExtendedMessage("TREE_REMOVE", function(msg) {
-      $.jstree._reference("#treecontainer").delete_node("#"+escapeURL(msg.node));
+      (msg.data).forEach(function(item) {
+        $.jstree._reference("#treecontainer").delete_node("#"+escapeURL(item));
+      });
     });
 
     // Handler for request to open a folder
@@ -93,13 +97,13 @@ function getTreeClient(comet) {
   });
 
   //
-  function addNodeToDom(item, many) {
+  function addNodeToDom(item) {
 
     // Make node expected by jsTree
     var node = makeJSTreeNode(item);
 
     // Determine position of node under parent. 'inside' will place node as the last child
-    var pos = ( ! many) ? findPosition(item.parent, item) : "inside";
+    var pos = "inside";
 
     // If node is a folder, create a node for each of the folder's children as well
     if (item.type == "folder") {

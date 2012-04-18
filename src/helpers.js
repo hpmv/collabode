@@ -119,6 +119,7 @@ function includeTreeScripts() {
   includeCss("jstree/style.css");
   includeJs("tree_client.js");
   includeJs("jstree/jquery.jstree.js");
+  includeJs("jstree/jquery.sort2.jstree.js");
 }
 
 function hideHeader() {
